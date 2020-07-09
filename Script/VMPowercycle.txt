@@ -1,4 +1,4 @@
-$VMs = Get-Content 'C:\users\shsunda.admin\Desktop\test.txt'; $ManualUpdateVMs = Get-VM $VMs|Get-View | Where-Object {$_.Config.Tools.ToolsUpgradePolicy -like "manual"}|select name,@{N='ToolsUpgradePolicy';E={$_.Config.Tools.ToolsUpgradePolicy } }
+$VMs = Get-Content ''; $ManualUpdateVMs = Get-VM $VMs|Get-View | Where-Object {$_.Config.Tools.ToolsUpgradePolicy -like "manual"}|select name,@{N='ToolsUpgradePolicy';E={$_.Config.Tools.ToolsUpgradePolicy } }
 Foreach ($VM in ($ManualUpdateVMs)) {
 $VMConfig = Get-View -VIObject $VM.Name
 $vmConfigSpec = New-Object VMware.Vim.VirtualMachineConfigSpec
@@ -8,12 +8,12 @@ $VMConfig.ReconfigVM($vmConfigSpec)
 }
 
 
-$VMs = Get-Content 'C:\users\shsunda.admin\Desktop\test.txt'
+$VMs = Get-Content 
 Get-VM $VMs|Get-View | select name,@{N='ToolsUpgradePolicy';E={$_.Config.Tools.ToolsUpgradePolicy } } |Sort Name  
 
 For servers : 
 
-$VMs = Get-Content 'C:\users\shsunda.admin\Desktop\test.txt'
+$VMs = Get-Content 
 Foreach ($VM in $VMs){
 $VMConfig = Get-VM -Name $VM| Get-View
 $vmConfigSpec = New-Object VMware.Vim.VirtualMachineConfigSpec
