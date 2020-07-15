@@ -1,0 +1,20 @@
+$password = "" | ConvertTo-SecureString -asPlainText -Force
+$username = "" 
+$credential = New-Object System.Management.Automation.PSCredential($username,$password)
+$scripthost = Read-Host "Please Enter the Hostname "
+""
+""
+"===========CPU - Top 10 Utilization List==========="
+gwmi Win32_PerfFormattedData_PerfProc_Process -computername $scripthost -Credential $credential | sort PercentProcessorTime -desc | select Name,PercentProcessorTime | Select -First 10 | ft -auto
+"===========Memory - Top 10 Utilization List==========="
+gwmi Win32_Process -computername $scripthost -Credential $credential | Sort WorkingSetSize -Descending | Select Name,@{n="Private Memory(mb)";Expression = {[math]::round(($_.WorkingSetSize / 1mb), 2)}} | Select -First 10 | Out-String   
+#gwmi Win32_Process -computername $scripthost -Credential $credential | Sort WorkingSetSize -Descending | Select Name,CommandLine,@{n="Private Memory(mb)";e={$_.WorkingSetSize/1mb}} | Select -First 10 | Out-String
+$fields = "Name",@{label = "Memory (MB)"; Expression = {[math]::round(($_.ws / 1mb), 2)}; Align = "Right"}; 
+
+"===========Server Memory Information==========="
+$fieldPercentage = @{Name = "Memory Percentage in Use (%)"; Expression = { “{0:N2}” -f ((($_.TotalVisibleMemorySize - $_.FreePhysicalMemory)*100)/ $_.TotalVisibleMemorySize)}};     
+$fieldfreeram = @{label = "Available Physical Memory (MB)"; Expression = {[math]::round(($_.FreePhysicalMemory / 1kb), 2)}}; 
+$fieldtotalram = @{label = "Total Physical Memory (MB)"; Expression = {[math]::round(($_.TotalVisibleMemorySize / 1kb), 2)}}; 
+$fieldfreeVram = @{label = "Available Virtual Memory (MB)"; Expression = {[math]::round(($_.FreeVirtualMemory / 1kb), 2)}};
+$memtotal =  Get-WmiObject -Class win32_OperatingSystem -ComputerName $scripthost -Credential $credential ; 
+$memtotal | Format-List $fieldPercentage,$fieldfreeram,$fieldtotalram,$fieldfreeVram,$fieldtotalVram ;

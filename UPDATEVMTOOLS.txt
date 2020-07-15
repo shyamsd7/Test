@@ -1,0 +1,5 @@
+Step 1: Open VMware powercli in server "rppd-sysupirob"
+Step 2: Enter the command "Connect-VIServer rppd-viewvc01.allegisgroup.com"
+Step 3: Enter the below command and press enter. (Modify the path accordingly where you kept the input file)
+$servers = Get-Content "C:\Users\shsunda.admin\Desktop\test.txt";foreach ($server in $servers){UPDATE-TOOLS -NOREBOOT -RUNASSYNC -VM $SERVER}
+Step 4: Disconnect from the vCenter "Disconnect-VIServer rppd-viewvc01.allegisgroup.com"

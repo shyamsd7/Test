@@ -1,0 +1,16 @@
+$computers = Get-Content 
+
+try
+{
+
+cd "\\\$\TEMP"
+.\PSExec.exe \\$computers -s winrm.cmd quickconfig -quiet
+
+Invoke-Command -ComputerName $computers -ScriptBlock {
+  regedit /i /s "w10-wpv-restore.reg"
+}
+}
+catch
+{
+Write-Host "Error for $computer"
+}

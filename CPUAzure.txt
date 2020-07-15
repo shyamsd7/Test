@@ -1,0 +1,1 @@
+gwmi Win32_Process | Sort WorkingSetSize -Descending | Select Name,@{n="Private Memory(mb)";Expression = {[math]::round(($_.WorkingSetSize / 1mb), 2)}} | Select -First 10 | Out-String

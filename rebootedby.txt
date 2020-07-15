@@ -1,0 +1,30 @@
+$password = "" | ConvertTo-SecureString -asPlainText -Force
+$username = "" 
+$credential = New-Object System.Management.Automation.PSCredential($username,$password)
+
+Function Get-ComInfo {
+param(
+
+$computers
+)
+ 
+"#"*160
+"Server Reboot Status"
+"Generated $(get-date)"
+"Generated for $computers"
+"#"*160
+ 
+Get-WinEvent -ComputerName $computers -Credential $credential -FilterHashtable @{logname='System'; id=1074}  |
+ForEach-Object {
+$rv = New-Object PSObject | Select-Object Date, User, Action, Process, Reason, ReasonCode, Comment
+$rv.Date = $_.TimeCreated
+$rv.User = $_.Properties[6].Value
+$rv.Process = $_.Properties[0].Value
+$rv.Action = $_.Properties[4].Value
+$rv.Reason = $_.Properties[2].Value
+$rv.ReasonCode = $_.Properties[3].Value
+$rv.Comment = $_.Properties[5].Value
+$rv
+} | Select-Object Date, Action, Reason, User
+}
+Get-Content  | ForEach-Object { Get-ComInfo -computers $_}
